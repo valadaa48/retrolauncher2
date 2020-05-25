@@ -1,0 +1,30 @@
+# http://urwid.org/reference/constants.html#foreground-and-background-colors
+palette = [
+    ["main_title", "light blue", ""],
+    ["time", "dark gray", ""],
+
+    ["button", "", ""],
+    ["button_focus", "standout", ""],
+
+    ["term_header", "black", "light blue"],
+    ["term_close_button", "standout", ""],
+    ["term_close_button_focus", "standout", ""],
+
+    ["stats_title", "dark cyan", ""],
+    ["stats_value", "light cyan", ""],
+    ["disk_normal", "black", "dark cyan"],
+    ["disk_complete", "black", "light cyan"],
+    ["bat_normal", "black", "dark cyan"],
+    ["bat_complete", "black", "light cyan"],
+
+    ["footer", "dark cyan", ""],
+    ["footer_disabled", "dark gray", ""],
+
+    ["f1", "dark gray", ""],
+    ["f2", "dark gray", ""],
+    ["f3", "dark gray", ""],
+    ["f4", "dark gray", ""],
+    ["f5", "dark gray", ""],
+    ["f6", "dark gray", ""],
+]
+

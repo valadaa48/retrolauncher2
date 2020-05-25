@@ -1,0 +1,31 @@
+title = "+-- Retro Roller --+"
+
+theme = "retroroller"
+log_file = "/tmp/retrolauncher.log"
+
+[shortcuts]
+f1 = { name = "Browse", action = "browse" }
+f2 = { name = "RetroArch", cmd = "retroarch" }
+f3 = { name = "Hotkey" }
+f4 = { name = "Menu", action = "menu" }
+f5 = { name = "Shutdown", cmd = "systemctl poweroff" }
+f6 = { name = "Quit", action = "quit" }
+
+[[apps]]
+name = "RetroArch"
+cmd = "retroarch"
+
+[[apps]]
+name = "RetroArch 32-bit"
+cmd = "retroarch32"
+
+[[apps]]
+name = ""
+
+[[apps]]
+name = "Emulation Station"
+cmd = "emulationstation"
+
+[[apps]]
+name = "PPSSPP"
+cmd = "performance on; ppsspp; performance off"
