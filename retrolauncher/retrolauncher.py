@@ -251,8 +251,7 @@ class App:
 
 def main():
     global app
-    if 0:
-        urwid.escape.SHOW_CURSOR = ""
+    urwid.escape.SHOW_CURSOR = ""
     app = App()
     app.loop.run()
 
