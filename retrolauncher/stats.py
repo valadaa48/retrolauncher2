@@ -47,7 +47,7 @@ def get_gov():
     )
 
 
-@cached(TTLCache(1, ttl=60))
+@cached(TTLCache(1, ttl=5))
 def get_ip():
     ssid = check_output("iwgetid -r || true", shell=True).decode().strip()
     j = json.loads(check_output("ip -j addr", shell=True).decode())
