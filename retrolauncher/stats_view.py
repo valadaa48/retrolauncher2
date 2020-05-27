@@ -37,16 +37,16 @@ class DiskStatus(urwid.ProgressBar):
 class BatteryStatus(urwid.ProgressBar):
     def __init__(self, normal, complete, *args, **kwargs):
         super(BatteryStatus, self).__init__(normal, complete, *args, **kwargs)
-
         self.tick()
 
     def get_text(self):
-        return f"{self._cap}% {self._current:+}mA"
+        return self.text
 
     def tick(self):
-        self._cap, self._status, self._current = stats.get_battery_stats()
-        self._current /= 1000.0
-        self.set_completion(self._cap)
+        cap, status, current = stats.get_battery_stats()
+        current /= 1000.0
+        self.set_completion(cap)
+        self.text = f"{cap}% {current}mA"
 
 
 class StatsView(urwid.WidgetWrap):

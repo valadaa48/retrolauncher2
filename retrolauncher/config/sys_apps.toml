@@ -30,9 +30,11 @@ term = true
 [[apps]]
 name = "Autostart RetroLauncher"
 cmd = "sudo systemctl disable emulationstation; sudo systemctl enable retrolauncher"
+term = true
 
 [[apps]]
 name = "Autostart Emulation Station"
 cmd = "sudo systemctl disable retrolauncher; sudo systemctl enable emulationstation"
+term = true
 
 
