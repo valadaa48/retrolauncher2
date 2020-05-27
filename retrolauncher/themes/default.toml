@@ -7,7 +7,7 @@ palette = [
     ["button_focus", "standout", ""],
 
     ["term_header", "black", "light blue"],
-    ["term_close_button", "standout", ""],
+    ["term_close_button", "white", ""],
     ["term_close_button_focus", "standout", ""],
 
     ["stats_title", "dark cyan", ""],

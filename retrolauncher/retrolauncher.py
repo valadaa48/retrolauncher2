@@ -7,6 +7,7 @@ import os
 import time
 import toml
 import shutil
+import shlex
 from evdev import ecodes as e
 from importlib import resources
 from subprocess import Popen, call, check_output, PIPE
@@ -79,7 +80,9 @@ class RLTerm(urwid.WidgetWrap):
             ("term_header", f"Running: {self.cmd}" + " " * 200), wrap="clip"
         )
 
-        term = urwid.Terminal(cmd.split(), main_loop=app.loop)
+        cmd2 = f"bash -c '{cmd}'"
+        term = urwid.Terminal(shlex.split(cmd2), main_loop=app.loop)
+        self._term = term
         self.frame = urwid.Frame(term, self.header, footer, focus_part="body")
         self._w = self.frame
         urwid.connect_signal(term, "closed", self.done)
