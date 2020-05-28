@@ -205,11 +205,14 @@ class App:
         if term:
             self.root.original_widget = RLTerm(cmd, self)
         else:
+            orig = self.root.original_widget
+            self.root.original_widget = urwid.SolidFill(' ')
             self.stop()
             with open(config["log_file"], "a") as f:
                 f.write(f"\nRetrolauncher: {cmd}\n\n")
             cmd_log = f"bash -c '{cmd}' &>> /tmp/retrolauncher.log"
             call(cmd_log, shell=True)
+            self.root.original_widget = orig
             self.start()
 
     def _update_stats(self, loop, user_data):
