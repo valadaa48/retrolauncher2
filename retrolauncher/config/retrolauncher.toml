@@ -29,3 +29,8 @@ cmd = "emulationstation"
 [[apps]]
 name = "PPSSPP"
 cmd = "performance on; ppsspp; performance off"
+
+[[apps]]
+name = "Dr4st1c"
+cmd = "performance on; /usr/bin/drastic; performance off"
+

@@ -21,6 +21,7 @@ THEME_PATH = op.expanduser("~/.config/retrolauncher/themes")
 
 urwid.set_encoding("utf8")
 
+
 def load_config():
     config = None
     with resources.path("retrolauncher.config", "retrolauncher.toml") as f:
@@ -38,6 +39,7 @@ def load_config():
         config["apps"] += toml.load(f)["apps"]
     return config
 
+
 def load_theme(name):
     os.makedirs(THEME_PATH, exist_ok=True)
     with resources.path("retrolauncher.themes", "default.toml") as f:
@@ -51,8 +53,6 @@ def load_theme(name):
 app = None
 config = load_config()
 theme = load_theme(config["theme"])
-
-
 
 
 class PlainButton(urwid.Button):
@@ -144,7 +144,8 @@ class MainView(urwid.WidgetWrap):
 
         self.app_menu = AppMenu()
         self.stats = StatsView()
-        cols = urwid.Columns([self.app_menu, self.stats], dividechars=2)
+
+        cols = urwid.Columns([('fixed', 30, self.app_menu), self.stats], dividechars=2)
         frame = urwid.Frame(cols, header=self.header, footer=self.footer())
         self._w = frame
 
@@ -206,7 +207,7 @@ class App:
             self.root.original_widget = RLTerm(cmd, self)
         else:
             orig = self.root.original_widget
-            self.root.original_widget = urwid.SolidFill(' ')
+            self.root.original_widget = urwid.SolidFill(" ")
             self.stop()
             with open(config["log_file"], "a") as f:
                 f.write(f"\nRetrolauncher: {cmd}\n\n")
