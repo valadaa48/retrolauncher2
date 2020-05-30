@@ -12,9 +12,10 @@ from evdev import ecodes as e
 from importlib import resources
 from subprocess import Popen, call, check_output, PIPE
 from os import path as op
-from . import stats
 from .input import InputPipe
 from .stats_view import StatsView
+from .browse import Browser
+from .common_widgets import PlainButton, RLTerm
 
 USER_CONFIG = op.expanduser("~/.config/retrolauncher/retrolauncher.toml")
 THEME_PATH = op.expanduser("~/.config/retrolauncher/themes")
@@ -35,8 +36,6 @@ def load_config():
     except:
         pass
 
-    with resources.path("retrolauncher.config", "sys_apps.toml") as f:
-        config["apps"] += toml.load(f)["apps"]
     return config
 
 
@@ -53,46 +52,6 @@ def load_theme(name):
 app = None
 config = load_config()
 theme = load_theme(config["theme"])
-
-
-class PlainButton(urwid.Button):
-    def __init__(self, caption):
-        super(PlainButton, self).__init__("")
-        self._w = urwid.AttrMap(
-            urwid.SelectableIcon(caption, 0), "button", "button_focus"
-        )
-
-
-class RLTerm(urwid.WidgetWrap):
-    def __init__(self, cmd, app):
-        self._app = app
-        self._ow = app.root.original_widget
-
-        btn = urwid.Button("Close")
-        w = urwid.AttrMap(btn, "term_close_button", "term_close_button_focus")
-        urwid.connect_signal(btn, "click", self.exit)
-
-        footer = urwid.GridFlow([w], 9, 1, 1, "center")
-
-        self.cmd = cmd
-
-        self.header = urwid.Text(
-            ("term_header", f"Running: {self.cmd}" + " " * 200), wrap="clip"
-        )
-
-        cmd2 = f"bash -c '{cmd}'"
-        term = urwid.Terminal(shlex.split(cmd2), main_loop=app.loop)
-        self._term = term
-        self.frame = urwid.Frame(term, self.header, footer, focus_part="body")
-        self._w = self.frame
-        urwid.connect_signal(term, "closed", self.done)
-
-    def done(self, *args, **kwargs):
-        self.header.set_text(("term_header", f"Finished: {self.cmd}" + " " * 200))
-        self.frame.set_focus("footer")
-
-    def exit(self, *args, **kwargs):
-        self._app.root.original_widget = self._ow
 
 
 class AppMenu(urwid.WidgetWrap):
@@ -115,18 +74,12 @@ class AppMenu(urwid.WidgetWrap):
 
 class Header(urwid.WidgetWrap):
     def __init__(self):
-        self.time = urwid.Text(("time", ""), "right")
-
-        left = urwid.Columns([])
-        center = urwid.Text(
-            ("main_title", config.get("title", "Retro Roller")), "center"
+        stats = urwid.AttrMap(urwid.Text("Stats", "left"), "hotkey")
+        browser = urwid.AttrMap(urwid.Text("Browser", "right"), "hotkey")
+        title = urwid.AttrMap(
+            urwid.Text(config.get("title", "Retro Roller"), "center"), "title"
         )
-        right = self.time
-        self._w = urwid.Columns([left, center, right])
-
-    def tick(self):
-        time_fmt = config.get("time_format", "%H:%M")
-        self.time.set_text(("time", f"{stats.get_time(time_fmt)}"))
+        self._w = urwid.Columns([stats, title, browser])
 
 
 class FixedText(urwid.Text):
@@ -143,9 +96,10 @@ class MainView(urwid.WidgetWrap):
         self.header = Header()
 
         self.app_menu = AppMenu()
-        self.stats = StatsView()
 
-        cols = urwid.Columns([('fixed', 30, self.app_menu), self.stats], dividechars=2)
+        cols = urwid.Columns(
+            [("fixed", 30, self.app_menu), urwid.Filler(urwid.Text(""))], dividechars=2
+        )
         frame = urwid.Frame(cols, header=self.header, footer=self.footer())
         self._w = frame
 
@@ -166,9 +120,15 @@ class MainView(urwid.WidgetWrap):
     def fixed_text(self, width, f, s, align="center"):
         return (width, urwid.Text((f"{f}", s[f]["name"][:width]), align=align))
 
-    def tick(self):
-        self.header.tick()
-        self.stats.tick()
+    def keypress(self, size, key):
+        if key == "page down":
+            app.root.original_widget = Browser(app, "/roms")
+            return None
+        elif key == "page up":
+            app.root.original_widget = StatsView(app)
+
+            return None
+        return super().keypress(size, key)
 
 
 BUTTON_MAP = {
@@ -189,11 +149,11 @@ class App:
     def __init__(self):
         self.main_view = MainView()
         self.root = urwid.WidgetPlaceholder(self.main_view)
+
         self.loop = urwid.MainLoop(
             self.root,
             handle_mouse=False,
             unhandled_input=self.unhandled_input,
-            screen=urwid.raw_display.Screen(),
             palette=theme["palette"],
         )
 
@@ -216,23 +176,17 @@ class App:
             self.root.original_widget = orig
             self.start()
 
-    def _update_stats(self, loop, user_data):
-        self.main_view.tick()
-        self.loop.set_alarm_in(1, self._update_stats)
-
     def unhandled_input(self, key):
         if key == "q":
             raise urwid.ExitMainLoop()
 
     def start(self):
-        self._stats_handle = self.loop.set_alarm_in(0, self._update_stats)
         self.loop.start()
         if self._inputpipe:
             self._inputpipe.start()
 
     def stop(self):
         self.loop.stop()
-        self.loop.remove_alarm(self._stats_handle)
         if self._inputpipe:
             self._inputpipe.stop()
 
@@ -246,20 +200,25 @@ class App:
             self.run_cmd(sc["cmd"], sc.get("term", False))
 
     def _input_reader(self, data):
-        j = json.loads(data.decode())
-        code = j["code"]
-        if code >= e.BTN_TRIGGER_HAPPY1 and code <= e.BTN_TRIGGER_HAPPY6:
-            self.handle_shortcut(code)
-        else:
-            key = BUTTON_MAP.get(code)
-            if key:
-                self.loop.process_input([key])
+        try:
+            j = json.loads(data.decode())
+            code = j["code"]
+            if code >= e.BTN_TRIGGER_HAPPY1 and code <= e.BTN_TRIGGER_HAPPY6:
+                self.handle_shortcut(code)
+            else:
+                key = BUTTON_MAP.get(code)
+                if key:
+                    self.loop.process_input([key])
+        except:
+            pass
 
 
 def main():
     global app
     urwid.escape.SHOW_CURSOR = ""
     app = App()
+    app.config = config
+    app.theme = theme
     app.loop.run()
 
 

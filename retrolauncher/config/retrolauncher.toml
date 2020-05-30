@@ -4,10 +4,10 @@ theme = "retroroller"
 log_file = "/tmp/retrolauncher.log"
 
 [shortcuts]
-f1 = { name = "Browse", action = "browse" }
-f2 = { name = "RetroArch", cmd = "retroarch" }
+f1 = { name = "RA", cmd = "retroarch" }
+f2 = { name = "RA32", cmd = "retroarch32" }
 f3 = { name = "Hotkey" }
-f4 = { name = "Menu", action = "menu" }
+f4 = { name = "ES", cmd = "emulationstation" }
 f5 = { name = "Shutdown", cmd = "systemctl poweroff" }
 f6 = { name = "Quit", action = "quit" }
 
@@ -33,4 +33,70 @@ cmd = "performance on; ppsspp; performance off"
 [[apps]]
 name = "Dr4st1c"
 cmd = "performance on; /usr/bin/drastic; performance off"
+
+[[apps]]
+name = "\n:: System Utils ::\n"
+
+# broken on v11
+[[apps]]
+name = "Dingux Commander"
+cmd = "dinguxcommander"
+
+[[apps]]
+name = "System Update"
+cmd = "sudo pacman -Syu --noconfirm"
+term = true
+
+#[[apps]]
+#name = "Install package(s) from USB"
+#cmd = "sudo mount /dev/sda1 /mnt && sudo pacman -U --noconfirm /mnt/pkg/*.xz; sudo umount /dev/sda1"
+#term = true
+#
+#[[apps]]
+#name = "Rsync roms from USB"
+#cmd = "sudo mount /dev/sda1 /mnt && rsync -av /mnt/roms/* /roms/; sudo umount /dev/sda1"
+#term = true
+
+[[apps]]
+name = "neofetch"
+cmd = "neofetch --ascii_distro Arch_small"
+term = true
+
+[[apps]]
+name = "Autostart RetroLauncher"
+cmd = "sudo systemctl disable emulationstation; sudo systemctl enable retrolauncher"
+term = true
+
+[[apps]]
+name = "Autostart Emulation Station"
+cmd = "sudo systemctl disable retrolauncher; sudo systemctl enable emulationstation"
+term = true
+
+[[apps]]
+name = "Install Dr4st1c"
+cmd = "/roms/sh/install_Dr4st1c.sh"
+
+[[context_menu]]
+name = "PPSSPP"
+cmd = "performance on; ppsspp {path}; performance off"
+path = "/roms/psp"
+
+[[context_menu]]
+name = "nestopia"
+cmd = "retroarch -L ~/.config/retroarch/cores/nestopia_libretro.so {path}"
+path = "/roms/nes"
+
+[[context_menu]]
+name = "Set Timezone"
+cmd = "sudo ln -sf {path} /etc/localtime"
+path = "/usr/share/zoneinfo"
+
+[[context_menu]]
+name = "Run in Terminal"
+cmd = "{path}"
+term = true
+
+[[context_menu]]
+name = "Run"
+cmd = "{path}"
 

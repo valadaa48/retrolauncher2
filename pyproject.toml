@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "retrolauncher"
-version = "0.1.1"
+version = "0.2.0"
 description = ""
 authors = ["valadaa48 <valadaa48@gmx.com>"]
 
@@ -9,8 +9,6 @@ python = "^3.8"
 urwid = "^2.1.0"
 toml = "^0.10.1"
 evdev = "^1.3.0"
-cachetools = "^4.1.0"
-humanize = "^0.5.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

@@ -1,7 +1,7 @@
 # http://urwid.org/reference/constants.html#foreground-and-background-colors
 palette = [
-    ["main_title", "light blue", ""],
-    ["time", "dark gray", ""],
+    ["title", "light blue", ""],
+    ["hotkey", "dark gray", ""],
 
     ["button", "", ""],
     ["button_focus", "standout", ""],
@@ -9,6 +9,8 @@ palette = [
     ["term_header", "black", "light blue"],
     ["term_close_button", "white", ""],
     ["term_close_button_focus", "standout", ""],
+
+    ["stats", "dark cyan", ""],
 
     ["stats_title", "dark cyan", ""],
     ["stats_value", "light cyan", ""],
@@ -19,6 +21,14 @@ palette = [
 
     ["footer", "dark cyan", ""],
     ["footer_disabled", "dark gray", ""],
+
+    # browser context menu
+    ['cm_dirmark', 'light cyan', '',],
+    ['cm_dirmark_focus', 'standout', '',],
+    ['cm_title', 'light blue', '',],
+    ['cm_header', 'light blue', '',],
+    ['cm_normal', '', '',],
+    ['cm_focus', 'standout', '',],
 
     ["f1", "dark gray", ""],
     ["f2", "dark gray", ""],
