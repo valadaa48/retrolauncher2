@@ -40,13 +40,11 @@ def load_config():
 
 
 def load_theme(name):
-    os.makedirs(THEME_PATH, exist_ok=True)
     with resources.path("retrolauncher.themes", "default.toml") as f:
-        shutil.copy(f, THEME_PATH)
-    try:
-        return toml.load(f"{THEME_PATH}/{name}.toml")
-    except:
-        return toml.load(f)
+        try:
+            return toml.load(f"{THEME_PATH}/{name}.toml")
+        except:
+            return toml.load(f)
 
 
 app = None
