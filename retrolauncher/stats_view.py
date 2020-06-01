@@ -67,6 +67,7 @@ class StatsView(urwid.WidgetWrap):
         self.ip = StatsItem("IP")
         self.ssid = StatsItem("ssid")
         self.bat = StatsItem("Bat", BatteryStatus("bat_normal", "bat_complete"))
+        self.cpu_freq = StatsItem("Freq")
         self.cpu = StatsItem("CPU")
         self.gpu = StatsItem("GPU")
         self.dmc = StatsItem("DMC")
@@ -82,6 +83,7 @@ class StatsView(urwid.WidgetWrap):
                 urwid.Divider(),
                 self.bat,
                 urwid.Divider(),
+                self.cpu_freq,
                 self.cpu,
                 self.gpu,
                 self.dmc,
@@ -99,6 +101,7 @@ class StatsView(urwid.WidgetWrap):
         self.ip.set_text(ip)
         self.ssid.set_text(ssid)
 
+        self.cpu_freq.set_text(f"{stats.get_cpu_freq() / 1000.0} MHz")
         cpu, gpu, dmc = stats.get_gov()
         self.cpu.set_text(cpu)
         self.gpu.set_text(gpu)

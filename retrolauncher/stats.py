@@ -14,6 +14,8 @@ GPU_GOV = "/sys/devices/platform/ff400000.gpu/devfreq/ff400000.gpu/governor"
 DMC_GOV = "/sys/devices/platform/dmc/devfreq/dmc/governor"
 CPU_GOV = "/sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
 
+CPU_FREQ = "/sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq"
+
 
 
 def get_file_value(path, default="", strip=True):
@@ -32,6 +34,9 @@ def get_battery_stats():
         get_file_value(BATTERY_STATUS),
         int(get_file_value(BATTERY_CURRENT, 0)),
     )
+
+def get_cpu_freq():
+    return int(get_file_value(CPU_FREQ, 0))
 
 
 @cached(TTLCache(1, ttl=5))
