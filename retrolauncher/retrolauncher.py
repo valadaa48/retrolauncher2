@@ -13,7 +13,7 @@ from importlib import resources
 from subprocess import Popen, call, check_output, PIPE
 from os import path as op
 from .input import InputPipe
-from .stats_view import StatsView
+from .stats_view import StatsView, StatsViewConky
 from .browse import Browser
 from .common_widgets import PlainButton, RLTerm
 
@@ -94,10 +94,9 @@ class MainView(urwid.WidgetWrap):
         self.header = Header()
 
         self.app_menu = AppMenu()
+        self.stats = StatsView()
 
-        cols = urwid.Columns(
-            [("fixed", 30, self.app_menu), urwid.Filler(urwid.Text(""))], dividechars=2
-        )
+        cols = urwid.Columns([("fixed", 30, self.app_menu), self.stats], dividechars=2)
         frame = urwid.Frame(cols, header=self.header, footer=self.footer())
         self._w = frame
 
@@ -123,10 +122,13 @@ class MainView(urwid.WidgetWrap):
             app.root.original_widget = Browser(app, "/roms")
             return None
         elif key == "page up":
-            app.root.original_widget = StatsView(app)
+            app.root.original_widget = StatsViewConky(app)
 
             return None
         return super().keypress(size, key)
+
+    def tick(self):
+        self.stats.tick()
 
 
 BUTTON_MAP = {
@@ -147,7 +149,6 @@ class App:
     def __init__(self):
         self.main_view = MainView()
         self.root = urwid.WidgetPlaceholder(self.main_view)
-
         self.loop = urwid.MainLoop(
             self.root,
             handle_mouse=False,
@@ -174,17 +175,23 @@ class App:
             self.root.original_widget = orig
             self.start()
 
+    def _update_stats(self, loop, user_data):
+        self.main_view.tick()
+        self.loop.set_alarm_in(1, self._update_stats)
+
     def unhandled_input(self, key):
         if key == "q":
             raise urwid.ExitMainLoop()
 
     def start(self):
+        self._stats_handle = self.loop.set_alarm_in(0, self._update_stats)
         self.loop.start()
         if self._inputpipe:
             self._inputpipe.start()
 
     def stop(self):
         self.loop.stop()
+        self.loop.remove_alarm(self._stats_handle)
         if self._inputpipe:
             self._inputpipe.stop()
 
