@@ -47,6 +47,10 @@ name = "System Update"
 cmd = "sudo pacman -Syu --noconfirm"
 term = true
 
+[[apps]]
+name = "Setup WiFi"
+cmd = "nmui"
+
 #[[apps]]
 #name = "Install package(s) from USB"
 #cmd = "sudo mount /dev/sda1 /mnt && sudo pacman -U --noconfirm /mnt/pkg/*.xz; sudo umount /dev/sda1"
