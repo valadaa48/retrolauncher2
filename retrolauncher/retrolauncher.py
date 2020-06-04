@@ -214,6 +214,8 @@ class App:
                 key = BUTTON_MAP.get(code)
                 if key:
                     self.loop.process_input([key])
+        except urwid.ExitMainLoop:
+            raise
         except:
             pass
 
