@@ -167,6 +167,7 @@ class App:
         else:
             orig = self.root.original_widget
             self.root.original_widget = urwid.SolidFill(" ")
+            self.loop.draw_screen()
             self.stop()
             with open(config["log_file"], "a") as f:
                 f.write(f"\nRetrolauncher: {cmd}\n\n")
@@ -174,6 +175,7 @@ class App:
             call(cmd_log, shell=True)
             self.root.original_widget = orig
             self.start()
+            self.loop.draw_screen()
 
     def _update_stats(self, loop, user_data):
         self.main_view.tick()
