@@ -1,0 +1,2 @@
+include retrolauncher/config/retrolauncher.toml
+include retrolauncher/themes/default.toml
