@@ -41,7 +41,7 @@ class InputPipe:
         while self._active:
             ev = dev.read_one()
             active = set(dev.active_keys())
-            if e.BTN_TRIGGER_HAPPY2 in active:
+            if e.BTN_TRIGGER_HAPPY5 in active:
                 time.sleep(self.poll_freq)
                 continue
 
